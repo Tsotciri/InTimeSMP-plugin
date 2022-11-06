@@ -1,0 +1,11 @@
+name: InTimeSMP-Plugin
+version: '${project.version}'
+main: net.tsotciri.itsmp.InTimeSMP
+api-version: 1.19
+authors: [ Tsotciri ]
+description: This is the official plugin for The InTimeSMP server
+website: https://github.com/Tsotciri/InTimeSMP
+commands:
+  time:
+    description: The main command for all time related things
+    usage: /<command>  [set] <Player> <time>
