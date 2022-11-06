@@ -80,6 +80,54 @@ public final class InTimeSMP extends JavaPlugin implements Listener {
         Bukkit.getLogger().warning("InTimeSMP plugin has been disabled");
     }
 
+    @Deprecated
+    static void addTime(Player player, int t, NamespacedKey NSK) throws InterruptedException {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        int playerTime = 0;
+        for (int i=0; i==t; i++) {
+            playerTime = data.get(NSK, PersistentDataType.INTEGER);
+            data.set(NSK, PersistentDataType.INTEGER, playerTime + 1);
+            displayTime(player, playerTime);
+            Thread.sleep(100);
+        }
+    }
+
+    static void timeSetCommand(String args, Player p,NamespacedKey NSK, String tta, String executer) {
+
+        Player selectedPlayer = Bukkit.getServer().getPlayer(args);
+
+        PersistentDataContainer data = selectedPlayer.getPersistentDataContainer();
+
+        data.set(NSK, PersistentDataType.INTEGER, Integer.valueOf(tta));
+
+        p.sendMessage(ChatColor.DARK_GREEN + "You have set " + selectedPlayer.getName() + "'s seconds to" + tta);
+
+        selectedPlayer.sendMessage(ChatColor.GREEN + "You received " + tta + " seconds from " + executer);
+    }
+
+    static void timeAddCommand(String args, Player p,NamespacedKey NSK, String tta, String executer) {
+
+        Player selectedPlayer = Bukkit.getServer().getPlayer(args);
+
+        PersistentDataContainer data = selectedPlayer.getPersistentDataContainer();
+
+        int playerTime = 0;
+        int timeToAdd = 0;
+        int time = 0;
+
+        playerTime = data.get(NSK, PersistentDataType.INTEGER);
+
+        timeToAdd = Integer.valueOf(tta);
+
+        time = playerTime + timeToAdd;
+
+        data.set(NSK, PersistentDataType.INTEGER, time);
+
+        p.sendMessage(ChatColor.DARK_GREEN + "You gave " + selectedPlayer.getName() + " " + tta + " Seconds");
+
+        selectedPlayer.sendMessage(ChatColor.GREEN + "You received " + tta + " seconds from " + executer);
+    }
+
     static void displayTime(Player player, int t) {
         int weeks = 00;
         int days = 00;
@@ -96,6 +144,69 @@ public final class InTimeSMP extends JavaPlugin implements Listener {
         String timeString = String.format("%02d:%02d:%02d:%02d:%02d", weeks, days, hours, minutes, seconds);
 
         player.sendActionBar(ChatColor.GREEN + timeString);
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
+        if (command.getLabel().equalsIgnoreCase("time")) {
+
+            Player p = (Player) sender;
+
+            if (args[0].equals("add")) {
+
+                if (args.length == 3) {
+                    if (sender instanceof Player) {
+                        if (p.isOp()) {
+
+                            timeAddCommand(args[1], p, Time, args[2], p.getName());
+
+                        } else {
+                            p.sendMessage(ChatColor.RED + "You do not have permission to use this command");
+                        }
+
+
+                    } else if (sender instanceof ConsoleCommandSender) {
+
+                        timeAddCommand(args[1], p, Time, args[2], "Console");
+
+                    } else if (sender instanceof CommandBlock) {
+
+                        timeAddCommand(args[1], p, Time, args[2], "CommandBlock");
+                    }
+                } else {
+                    p.sendMessage(ChatColor.RED + "Error wrong amount of Argumets");
+                }
+            } else if (args[0].equals("set")) {
+
+                if (args.length == 3) {
+                    if (sender instanceof Player) {
+                        if (p.isOp()) {
+
+                            timeSetCommand(args[1], p, Time, args[2], p.getName());
+
+                        } else {
+                            p.sendMessage(ChatColor.RED + "You do not have permission to use this command");
+                        }
+
+
+                    } else if (sender instanceof ConsoleCommandSender) {
+
+                        timeSetCommand(args[1], p, Time, args[2], "Console");
+
+                    } else if (sender instanceof CommandBlock) {
+
+                        timeSetCommand(args[1], p, Time, args[2], "CommandBlock");
+                    }
+                } else {
+                    p.sendMessage(ChatColor.RED + "Error wrong amount of Argumets");
+                }
+            } else {
+                p.sendMessage(ChatColor.RED + "Invalid argument: " + args[0]);
+            }
+
+        }
+        return true;
     }
 
     @EventHandler

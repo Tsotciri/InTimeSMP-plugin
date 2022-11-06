@@ -6,7 +6,7 @@
 
     <groupId>net.tsotciri</groupId>
     <artifactId>InTimeSMP</artifactId>
-    <version>v1.0-alpha</version>
+    <version>v2.0-alpha</version>
     <packaging>jar</packaging>
 
     <name>InTimeSMP Plugin</name>
